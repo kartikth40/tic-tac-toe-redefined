@@ -1,0 +1,149 @@
+body {
+  /* background-color: black; */
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.gameplay-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-container {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 10px;
+  border: 5px solid black;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+}
+
+.grid-container::after {
+  position: absolute;
+  content: '';
+  width: 90%;
+  height: 20px;
+  border-radius: 10px;
+  background: linear-gradient(45deg, rgb(255, 84, 84), rgb(255, 255, 106), rgb(126, 255, 126));
+  box-shadow: 0 0 5px white, inset 0 0 10px rgb(255, 255, 255);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.grid-container.mark::after {
+  opacity: 1;
+}
+
+.grid-container.mark.row1::after {
+  top: 17%;
+  transform: translate(0, -50%);
+}
+.grid-container.mark.row2::after {
+  top: 50%;
+  transform: translate(0, -50%);
+}
+.grid-container.mark.row3::after {
+  top: 84%;
+  transform: translate(0, -50%);
+}
+.grid-container.mark.col1::after {
+  left: 16.3%;
+  transform: translate(-50%, 0) rotate(90deg);
+}
+.grid-container.mark.col2::after {
+  left: 50%;
+  transform: translate(-50%, 0) rotate(90deg);
+}
+.grid-container.mark.col3::after {
+  left: 84%;
+  transform: translate(-50%, 0) rotate(90deg);
+}
+.grid-container.mark.dia1::after {
+  transform: rotate(45deg);
+  width: 125%;
+}
+.grid-container.mark.dia2::after {
+  transform: rotate(-45deg);
+  width: 125%;
+}
+
+.box-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+}
+.box.cross-hover:hover {
+  background-color: rgb(255, 229, 229);
+}
+.box.circle-hover:hover{
+  background-color: rgb(226, 233, 255);
+}
+.box.cross:hover, .box.circle:hover {
+  background-color: rgb(235, 235, 235);
+}
+.box::before, .box::after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  content: attr(data-value);
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 20px;
+}
+.box.vanishing::before, .box.vanishing::after {
+  color: rgb(255, 114, 114) !important;
+  font-weight: bolder;
+}
+.box::before {
+  background-image: url("./imgs/circle.png");
+  background-size: 80%;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+}
+.box::after {
+  background-image: url("./imgs/cross.png");
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  color: rgb(255, 255, 255);
+}
+.box.cross::after {
+  opacity: 1;
+}
+.box.circle::before{
+  opacity: 1;
+}
+.box.cross-hover:hover::after {
+  opacity: .15;
+}
+.box.circle-hover:hover::before{
+  opacity: .15;
+}
