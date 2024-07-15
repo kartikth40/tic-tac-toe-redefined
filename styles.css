@@ -30,7 +30,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-bottom: 10px;
+  padding: 10px;
 }
 .title {
   position: absolute;
@@ -42,6 +42,14 @@ body {
   color: black;
   text-decoration: underline;
   font-size: 20px;
+}
+
+.bot-expressions {
+  font-size: 20px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
 }
 
 .game-over-overlay {
@@ -56,7 +64,7 @@ body {
 .game-over-overlay.show {
   display: flex;
 }
-.game-over-overlay.show + .restart-btn {
+.game-over-overlay.show + .btns{
   display: none;
 }
 .restart-btn.restart {
@@ -79,7 +87,7 @@ body {
   background: radial-gradient(rgb(232, 245, 255), rgb(213, 236, 255));
 
 }
-button.restart-btn {
+button.restart-btn, .is-bot {
   border: 2px solid black;
   cursor: pointer;
   border-radius: 5px;
@@ -90,11 +98,30 @@ button.restart-btn {
   box-shadow: 2px 2px black;
   transform: translate(-2px, -2px);
 }
-button.restart-btn:hover {
+button.restart-btn:hover, .is-bot:hover {
   color: white;
   background-color: rgb(144, 84, 255);
   box-shadow: 1px 1px black;
   transform: translate(-1px, -1 px);
+}
+.is-bot:disabled {
+  color: black;
+  border: 1px solid rgba(255, 255, 255, 0.123);
+  box-shadow: none;
+  cursor: default;
+  font-weight: bold;
+}
+.is-bot:hover:disabled {
+  box-shadow: inset 0 0 5px rgb(133, 68, 255), 0 0 5px rgb(133, 68, 255);
+  background-color: rgb(156, 103, 255);
+  box-shadow: none;
+  transform: translate(-2px, -2px);
+  color: black;
+}
+
+.btns {
+  display: flex;
+  gap: 10px;
 }
 
 .grid-container {
@@ -177,10 +204,10 @@ button.restart-btn:hover {
   cursor: pointer;
   position: relative;
 }
-.box.cross-hover:hover {
+.box.cross-hover {
   background-color: rgb(183, 144, 255);
 }
-.box.circle-hover:hover{
+.box.circle-hover{
   background-color: rgb(183, 144, 255);
 }
 .box::before, .box::after {

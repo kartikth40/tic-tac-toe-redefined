@@ -3,9 +3,22 @@ const cols = 3
 const boxes = []
 const queueOfZeroes = []
 const queueOfCrosses = []
-const vsBot = true
+let vsBot = localStorage.getItem('vsBot') ? JSON.parse(localStorage.getItem('vsBot')) : true
+console.log(vsBot, JSON.parse(localStorage.getItem('vsBot')))
+document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Bot' : 'Vs Human')
 const player = 0
 const bot = 1
+let botThinking = false
+const botExpressions = {
+  'THINKING': ['😗','🤔','🤨','😏','😮','🧐'],
+  'THINKINGWORDS': ['Hmm, let me think...','Calculating the best move...',"Let's see... where should I go next?",'Considering my options...','This requires some strategic thinking...','Analyzing the board...','Evaluating possibilities...',"This one's making me think!"],
+  'HAPPY': ['😀','😁','😄','😉','😋','😎','😍','😚','🤩','😏','😜','🤪'],
+  'HAPPYWORDS': ["I'm feeling pretty good about that!", "Awesome, things are going my way!", "Woohoo! I did it!","Nice! Everything's coming together!","I'm really enjoying this game!","That was a smart move, if I do say so myself!","Yay! I made a good choice!"],
+  'SAD': ['😣','😥','🤐','😫','😕','😓','🙁','😞','😬','😦','😱','🥶','🥺'],
+  'SADWORDS':["Oh no, I didn't see that coming...","Well, that didn't go as planned...",'Oops, I made a mistake.','Ah, you got me this time!',"I'm feeling a bit down after that move.","Looks like I'm not at my best today.","I'm a bit sad about that outcome."],
+  'WAITING': ['😗','🤨','🥱','😴','🧐'],
+  'WAITINGWORDS':["Your turn! Take your time.","Waiting for your move...","What will you do next?", "Thinking hard, huh? Take your time!","Your move! Let's see what you've got.","Take your time, I'm patiently waiting.","Excited to see your strategy!"]
+}
 let gameOver = false
 const possibleWinPositions = {
   'ROW1':'row1',
@@ -21,9 +34,20 @@ let winPosition = ''
 
 let currentPlayer = 0 // 0: O | 1: X
 
+const botExpressionsEle = document.querySelector('.bot-expressions')
+
 document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener('click', function() {
   location.reload()
 }))
+
+document.querySelector('.is-bot').addEventListener('click', function() {
+  if(queueOfCrosses.length > 0 || queueOfZeroes.length > 0) {
+    return
+  }
+  document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Human' : 'Vs Bot')
+  vsBot = !vsBot
+  localStorage.setItem('vsBot', vsBot)
+})
 
 for(let row = 0; row < rows; row++) {
   let currentRow = []
@@ -50,7 +74,8 @@ function handleBoxHovers(boxEle, row, col) {
 
 function handleBoxClick(boxEle, row, col) {
   boxEle.addEventListener("click", () => {
-    if(gameOver) return
+    document.querySelector('.is-bot').disabled = true
+    if(gameOver || botThinking) return
     if(boxes[row] && boxes[row][col] && boxes[row][col].marked) return
     const value = currentPlayer
     markTheTerritory(boxEle, row, col)
@@ -60,7 +85,34 @@ function handleBoxClick(boxEle, row, col) {
       handleZero(boxEle, row, col)
     }
     Promise.resolve().then(() => {
-      if(vsBot && value === 0 && !gameOver) runBot()
+      if(vsBot && value === 0 && !gameOver) {
+        const beShort = queueOfCrosses.length + queueOfZeroes.length < 4
+        const randomDelay = getRandomNumber(beShort ? 2 : 5)
+        botThinking = true
+        const expression = botExpressions.THINKING[getRandomNumber(botExpressions.THINKING.length)]
+        const words = botExpressions.THINKINGWORDS[getRandomNumber(botExpressions.THINKINGWORDS.length)]
+        botExpressionsEle.innerText = expression + ' ' + words
+        const interval = setInterval(() => {
+          let randomBox = boxes[getRandomNumber(3)][getRandomNumber(3)]
+          while(randomBox.marked) {
+            randomBox = boxes[getRandomNumber(3)][getRandomNumber(3)]
+          }
+          randomBox.element.classList.add('cross-hover')
+          setTimeout(() => {
+            randomBox.element.classList.remove('cross-hover')
+          }, 150);
+        }, 200)
+        setTimeout(() => {
+          Promise.resolve().then(() => {
+            clearInterval(interval)
+            runBot()
+            botThinking = false
+            const expression = botExpressions.WAITING[getRandomNumber(botExpressions.WAITING.length)]
+            const words = botExpressions.WAITINGWORDS[getRandomNumber(botExpressions.WAITINGWORDS.length)]
+            botExpressionsEle.innerText = expression + ' ' + words
+          })
+        }, randomDelay * 1000);
+      } 
     })
   })
 }
@@ -90,12 +142,12 @@ function runBot() {
       handleCross(boxEle, row, col)
     }else {
       console.log('Random Move ')
-      let randomRow = getRandomNumber()
-      let randomCol = getRandomNumber()
+      let randomRow = getRandomNumber(3)
+      let randomCol = getRandomNumber(3)
     
       while(boxes[randomRow][randomCol].marked) {
-        randomRow = getRandomNumber()
-        randomCol = getRandomNumber()
+        randomRow = getRandomNumber(3)
+        randomCol = getRandomNumber(3)
       }
     
       const boxEle = document.querySelector(`.box-${randomRow+1}${randomCol+1}`)
@@ -121,7 +173,7 @@ function handleCross(boxEle, row, col) {
     const elementToRemove = queueOfCrosses.shift()
     elementToRemove.element.classList.remove('cross', 'circle', 'vanishing')
     elementToRemove.element.setAttribute('data-value', '')
-    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove, marked: false, value: null}
+    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove.element, marked: false, value: null}
   }
 
   Promise.resolve().then(() => {
@@ -143,7 +195,7 @@ function handleZero(boxEle, row, col) {
     const elementToRemove = queueOfZeroes.shift()
     elementToRemove.element.classList.remove('cross', 'circle', 'vanishing')
     elementToRemove.element.setAttribute('data-value', '')
-    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove, marked: false, value: null}
+    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove.element, marked: false, value: null}
   }
 
   Promise.resolve().then(() => {
@@ -153,8 +205,8 @@ function handleZero(boxEle, row, col) {
 }
 
 
-function getRandomNumber() {
-  return Math.floor(Math.random() * 3)
+function getRandomNumber(max) {
+  return Math.floor(Math.random() * max)
 }
 
 function checkIfWon() {
@@ -162,7 +214,19 @@ function checkIfWon() {
   if(!isWon) return
   gameOver = true
   document.querySelector('.game-over-overlay').classList.add('show')
-  document.querySelector('.who-won').innerText = currentPlayer === 1 ? 'You Won!' : 'Bot Won!'
+  if(currentPlayer === 1 && vsBot) {
+    document.querySelector('.who-won').innerText = 'You Won!'
+    const expression = botExpressions.SAD[getRandomNumber(botExpressions.SAD.length)]
+    const words = botExpressions.SADWORDS[getRandomNumber(botExpressions.SADWORDS.length)]
+    botExpressionsEle.innerText = expression + ' ' + words
+  }else if(vsBot){
+    document.querySelector('.who-won').innerText = 'Bot Won!'
+    const expression = botExpressions.HAPPY[getRandomNumber(botExpressions.HAPPY.length)]
+    const words = botExpressions.HAPPYWORDS[getRandomNumber(botExpressions.HAPPYWORDS.length)]
+    botExpressionsEle.innerText = expression + ' ' + words
+  }else {
+    document.querySelector('.who-won').innerText = currentPlayer === 1 ? 'Player 1 Won!': 'Player 2 Won!'
+  }
   const grid = document.querySelector('.grid-container')
   grid.classList.add('mark', `${winPosition}`)
   console.log('WON!');
