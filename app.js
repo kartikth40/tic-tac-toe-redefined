@@ -21,6 +21,10 @@ let winPosition = ''
 
 let currentPlayer = 0 // 0: O | 1: X
 
+document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener('click', function() {
+  location.reload()
+}))
+
 for(let row = 0; row < rows; row++) {
   let currentRow = []
   for(let col = 0; col < cols; col++) {
@@ -157,6 +161,8 @@ function checkIfWon() {
   const isWon = checkRows() || checkCols() || checkDiagonals()
   if(!isWon) return
   gameOver = true
+  document.querySelector('.game-over-overlay').classList.add('show')
+  document.querySelector('.who-won').innerText = currentPlayer === 1 ? 'You Won!' : 'Bot Won!'
   const grid = document.querySelector('.grid-container')
   grid.classList.add('mark', `${winPosition}`)
   console.log('WON!');
@@ -275,7 +281,7 @@ function checkDiagonalsIfAboutToWin(player, aboutToVanish) {
   currentDiaCount = 0
   potentialWinPosition = null 
   for(let i = 0; i < rows; i++) {
-    if(aboutToVanish.row === i && aboutToVanish.col === i) continue
+    if(aboutToVanish.row === i && aboutToVanish.col === rows-i-1) continue
     if(boxes[i][rows-i-1].marked && boxes[i][rows-i-1].value === player) currentDiaCount++
     else if(!boxes[i][rows-i-1].marked) potentialWinPosition = [i,rows-i-1]
     }
