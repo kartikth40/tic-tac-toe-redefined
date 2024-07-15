@@ -47,22 +47,24 @@ function handleBoxClick(boxEle, row, col) {
     if(boxes[row] && boxes[row][col] && boxes[row][col].marked) return
     boxEle.classList.remove('cross-hover', 'circle-hover')
     boxEle.classList.add(currentPlayer === 1 ? 'cross' : 'circle')
-    boxEle.setAttribute('data-value', 2)
+    boxEle.setAttribute('data-value', '2️⃣')
     let marked = true
     let value = currentPlayer
     currentPlayer = currentPlayer === 1 ? 0 : 1
     boxes[row][col] = {element: boxEle, marked, value}
     if(value === 1) {
-      queueOfCrosses.forEach(el => {
-        const currentValue = el.element.getAttribute('data-value')
+      queueOfCrosses.forEach((el, idx) => {
+        const currentValue = el.remaining
         if(currentValue == 1){ 
           el.element.classList.add('vanishing')
           console.log(currentValue)
 
         }
-        el.element.setAttribute('data-value', currentValue - 1)
+        const value = el.remaining === 2 ? '1️⃣' : '🔴'
+        el.element.setAttribute('data-value', value) 
+        queueOfCrosses[idx] = {...el, remaining: el.remaining-1}
       })
-      queueOfCrosses.push({element: boxEle, row, col})
+      queueOfCrosses.push({element: boxEle, row, col, remaining: 2})
       if(queueOfCrosses.length > 3) {
         const elementToRemove = queueOfCrosses.shift()
         elementToRemove.element.classList.remove('cross', 'circle', 'vanishing')
@@ -70,12 +72,14 @@ function handleBoxClick(boxEle, row, col) {
         boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove, marked: false, value: null}
       }
     }else {
-      queueOfZeroes.forEach(el => {
-        const currentValue = el.element.getAttribute('data-value')
+      queueOfZeroes.forEach((el, idx) => {
+        const currentValue = el.remaining
         if(currentValue == 1) el.element.classList.add('vanishing')
-        el.element.setAttribute('data-value', currentValue - 1)
+        const value = el.remaining === 2 ? '1️⃣' : '🔴'
+        el.element.setAttribute('data-value', value)
+        queueOfZeroes[idx] = {...el, remaining: el.remaining-1}
       })
-      queueOfZeroes.push({element: boxEle, row, col})
+      queueOfZeroes.push({element: boxEle, row, col, remaining: 2})
       if(queueOfZeroes.length > 3) {
         const elementToRemove = queueOfZeroes.shift()
         elementToRemove.element.classList.remove('cross', 'circle', 'vanishing')
