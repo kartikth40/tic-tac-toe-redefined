@@ -17,6 +17,7 @@ body {
   display: flex;
   align-items: center;
   position: relative;
+  overflow: hidden;
 }
 .top-shelf {
   white-space: nowrap;
