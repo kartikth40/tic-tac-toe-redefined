@@ -51,7 +51,6 @@ body {
   padding-block: 10px;
   background: linear-gradient(45deg, rgb(205, 191, 255), rgb(177, 170, 255));
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.167);
-  border-radius: 5px;
 }
 
 .bot-expressions {
@@ -67,7 +66,7 @@ body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
   text-transform: uppercase;
   display: none;
@@ -93,7 +92,7 @@ body {
   line-height: 20px;
   margin: 0;
   padding: 5px 10px;
-  border-radius: 15px;
+  border-radius: 5px;
   font-weight: bold;
   box-shadow: inset 2px 2px rgb(116, 83, 174), inset 3px 3px 5px rgb(145, 81, 255);
   background-color: white;

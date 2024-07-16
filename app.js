@@ -87,7 +87,7 @@ function handleBoxClick(boxEle, row, col) {
     Promise.resolve().then(() => {
       if(vsBot && value === 0 && !gameOver) {
         const beShort = queueOfCrosses.length + queueOfZeroes.length < 4
-        const randomDelay = getRandomNumber(beShort ? 2 : 5)
+        const randomDelay = beShort ? 2 : 2 + getRandomNumber(4)
         botThinking = true
         const expression = botExpressions.THINKING[getRandomNumber(botExpressions.THINKING.length)]
         const words = botExpressions.THINKINGWORDS[getRandomNumber(botExpressions.THINKINGWORDS.length)]
@@ -100,8 +100,8 @@ function handleBoxClick(boxEle, row, col) {
           randomBox.element.classList.add('cross-hover')
           setTimeout(() => {
             randomBox.element.classList.remove('cross-hover')
-          }, 150);
-        }, 200)
+          }, 250);
+        }, 300)
         setTimeout(() => {
           Promise.resolve().then(() => {
             clearInterval(interval)
