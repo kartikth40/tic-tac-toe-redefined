@@ -5,7 +5,7 @@ const queueOfZeroes = []
 const queueOfCrosses = []
 let vsBot = localStorage.getItem('vsBot') ? JSON.parse(localStorage.getItem('vsBot')) : true
 console.log(vsBot, JSON.parse(localStorage.getItem('vsBot')))
-document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Bot' : 'Vs Human')
+document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Bot 🤖' : 'Vs Human 🧔')
 const player = 0
 const bot = 1
 let botThinking = false
@@ -44,7 +44,7 @@ document.querySelector('.is-bot').addEventListener('click', function() {
   if(queueOfCrosses.length > 0 || queueOfZeroes.length > 0) {
     return
   }
-  document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Human' : 'Vs Bot')
+  document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Human 🧔' : 'Vs Bot 🤖')
   vsBot = !vsBot
   localStorage.setItem('vsBot', vsBot)
 })
