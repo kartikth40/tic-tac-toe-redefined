@@ -4,10 +4,13 @@ const boxes = []
 const queueOfZeroes = []
 const queueOfCrosses = []
 let vsBot = localStorage.getItem('vsBot') ? JSON.parse(localStorage.getItem('vsBot')) : true
-console.log(vsBot, JSON.parse(localStorage.getItem('vsBot')))
+!vsBot ? document.querySelector('.bot-level-btn').style.display = 'none' : document.querySelector('.bot-level-btn').style.display = 'block'
 document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Bot 🤖' : 'Vs Human 🧔')
 const player = 0
 const bot = 1
+let botLevel = localStorage.getItem('botLevel') ? JSON.parse(localStorage.getItem('botLevel')) : 4
+document.querySelector('.bot-level').innerText = botLevel
+document.querySelector('.bot-level-btn').setAttribute('data-tip', botLevel === 1 ? "I'm just a random dude" : botLevel === 2 ? "I'll just try to win" : botLevel === 3 ? "I'll try to block you" : "If I can't win then I'll block you")
 let botThinking = false
 const botExpressions = {
   'THINKING': ['😗','🤔','🤨','😏','😮','🧐'],
@@ -45,8 +48,17 @@ document.querySelector('.is-bot').addEventListener('click', function() {
     return
   }
   document.querySelector('.is-bot').innerText = (vsBot ? 'Vs Human 🧔' : 'Vs Bot 🤖')
+  vsBot ? document.querySelector('.bot-level-btn').style.display = 'none' : document.querySelector('.bot-level-btn').style.display = 'block'
   vsBot = !vsBot
   localStorage.setItem('vsBot', vsBot)
+})
+
+document.querySelector('.bot-level-btn').addEventListener('click', () => {
+  botLevel++
+  if(botLevel > 4) botLevel = 1
+  document.querySelector('.bot-level').innerText = botLevel
+  document.querySelector('.bot-level-btn').setAttribute('data-tip', botLevel === 1 ? "I'm just a random dude" : botLevel === 2 ? "I'll just try to win" : botLevel === 3 ? "I'll try to block you" : "If I can't win then I'll block you")
+  localStorage.setItem('botLevel', botLevel)
 })
 
 for(let row = 0; row < rows; row++) {
@@ -75,6 +87,7 @@ function handleBoxHovers(boxEle, row, col) {
 function handleBoxClick(boxEle, row, col) {
   boxEle.addEventListener("click", () => {
     document.querySelector('.is-bot').disabled = true
+    document.querySelector('.bot-level-btn').disabled = true
     if(gameOver || botThinking) return
     if(boxes[row] && boxes[row][col] && boxes[row][col].marked) return
     const value = currentPlayer
@@ -132,10 +145,20 @@ function markTheTerritory(boxEle, row, col, botTurn=false) {
 function runBot() {
   Promise.resolve().then(() => {
     // Promised in order to run this only after the previous code is done running
-    const potentialWinPosition = checkIfAboutToWin(bot)
-    const potentialOpponentWinPosition = checkIfAboutToWin(player)
+    let potentialWinPosition = false
+    let potentialOpponentWinPosition = false
+    if(botLevel === 2) {
+      potentialWinPosition = checkIfAboutToWin(bot)
+    }
+    else if(botLevel === 3) {
+      potentialOpponentWinPosition = checkIfAboutToWin(player)
+    }
+    else if(botLevel === 4) {
+      potentialWinPosition = checkIfAboutToWin(bot)
+      potentialOpponentWinPosition = checkIfAboutToWin(player)
+    }
     if(potentialWinPosition || potentialOpponentWinPosition) {
-      console.log(potentialWinPosition ? 'Smart Win Move -> '+potentialWinPosition : 'Smart Block -> '+ potentialOpponentWinPosition)
+      console.log(potentialWinPosition ? 'Smart Win Move -> '+potentialWinPosition : 'Smart Block Move -> '+ potentialOpponentWinPosition)
       const [row,col] = potentialWinPosition || potentialOpponentWinPosition
       const boxEle = document.querySelector(`.box-${row+1}${col+1}`)
       markTheTerritory(boxEle, row, col, true)
