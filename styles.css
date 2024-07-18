@@ -344,6 +344,9 @@ body {
   .btns {
     flex-direction: row;
   }
+  .bot-level-btn::after {
+    display: none !important;
+  }
   .game-over-overlay {
     flex-direction: row;
   }
