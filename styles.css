@@ -20,6 +20,7 @@ body {
   overflow: hidden;
 }
 .top-shelf {
+  z-index: 1;
   white-space: nowrap;
   position: absolute;
   right: 10px;
@@ -330,12 +331,13 @@ body {
 }
 
 footer {
+  white-space: nowrap;
   position: absolute;
-  top: 100dvh;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%) translateY(-100%);
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  background: linear-gradient(45deg, rgb(205, 191, 255), rgb(204, 199, 255));
+  background: linear-gradient(45deg, rgb(205, 191, 255), rgb(185, 179, 255));
   box-shadow: 0 0 2px black;
   padding: 2px 7px;
   font-weight: bold;
@@ -354,7 +356,7 @@ footer > a {
   .top-shelf {
     right: unset;
     top: unset;
-    bottom: 50px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -375,6 +377,17 @@ footer > a {
     right: unset;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 130px;
+    bottom: 100px;
+  }
+  footer {
+    bottom: unset;
+    transform: translateX(-50%) translateY(0);
+    border-radius: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 0 0 1px black;
+    top: 35px;
+    z-index: 0;
+    border-top: 1px dashed black;
   }
 }
