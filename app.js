@@ -100,8 +100,7 @@ function handleBoxClick(boxEle, row, col) {
     }
     Promise.resolve().then(() => {
       if(vsBot && value === 0 && !gameOver) {
-        const beShort = queueOfCrosses.length + queueOfZeroes.length < 4
-        const randomDelay = beShort ? 2 : 2 + getRandomNumber(4)
+        const delay = 2
         botThinking = true
         const expression = botExpressions.THINKING[getRandomNumber(botExpressions.THINKING.length)]
         const words = botExpressions.THINKINGWORDS[getRandomNumber(botExpressions.THINKINGWORDS.length)]
@@ -125,7 +124,7 @@ function handleBoxClick(boxEle, row, col) {
             const words = botExpressions.WAITINGWORDS[getRandomNumber(botExpressions.WAITINGWORDS.length)]
             botExpressionsEle.innerText = expression + ' ' + words
           })
-        }, randomDelay * 1000);
+        }, delay * 1000);
       } 
     })
   })
