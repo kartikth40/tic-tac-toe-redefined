@@ -331,9 +331,9 @@ body {
 
 footer {
   position: absolute;
-  bottom: 0;
+  top: 100dvh;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-100%);
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   background: linear-gradient(45deg, rgb(205, 191, 255), rgb(204, 199, 255));
   box-shadow: 0 0 2px black;
@@ -354,7 +354,7 @@ footer > a {
   .top-shelf {
     right: unset;
     top: unset;
-    bottom: 20px;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -375,16 +375,6 @@ footer > a {
     right: unset;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 100px;
-  }
-
-  footer {
-    left:0;
-    transform: none;
-    writing-mode: vertical-rl;
-    bottom: 15px;
-    border-top-left-radius: 0;
-    border-bottom-right-radius: 10px;
-    padding: 7px 2px;
+    bottom: 130px;
   }
 }
