@@ -22,6 +22,7 @@ const botExpressions = {
   'WAITING': ['😗','🤨','🥱','😴','🧐'],
   'WAITINGWORDS':["Your turn! Take your time.","Waiting for your move...","What will you do next?", "Thinking hard, huh? Take your time!","Your move! Let's see what you've got.","Take your time, I'm patiently waiting.","Excited to see your strategy!"]
 }
+document.querySelector('.footer-year').innerText = new Date().getFullYear()
 let gameOver = false
 const possibleWinPositions = {
   'ROW1':'row1',

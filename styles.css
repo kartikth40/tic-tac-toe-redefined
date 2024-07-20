@@ -60,7 +60,7 @@ body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   position: absolute;
   right: 20px;
-  bottom: 20px;
+  bottom: 30px;
 }
 
 .game-over-overlay {
@@ -329,6 +329,23 @@ body {
   opacity: .15;
 }
 
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  background: linear-gradient(45deg, rgb(205, 191, 255), rgb(204, 199, 255));
+  box-shadow: 0 0 2px black;
+  padding: 2px 7px;
+  font-weight: bold;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+footer > a {
+  color: black;
+  text-decoration: none;
+}
 
 @media only screen and (max-width: 450px) {
   .title {
@@ -359,5 +376,15 @@ body {
     left: 50%;
     transform: translateX(-50%);
     bottom: 100px;
+  }
+
+  footer {
+    left:0;
+    transform: none;
+    writing-mode: vertical-rl;
+    bottom: 15px;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 10px;
+    padding: 7px 2px;
   }
 }
