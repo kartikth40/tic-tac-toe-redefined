@@ -44,11 +44,11 @@ const botExpressionsEle = document.querySelector('.bot-expressions')
 
 // document.addEventListener('DOMContentLoaded', (event) => {})
 
-document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener(clickOrTouch, function() {
+document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener('click', function() {
   location.reload()
 }))
 
-document.querySelector('.is-bot').addEventListener(clickOrTouch, function() {
+document.querySelector('.is-bot').addEventListener("click", function() {
   if(queueOfCrosses.length > 0 || queueOfZeroes.length > 0) {
     return
   }
@@ -58,7 +58,7 @@ document.querySelector('.is-bot').addEventListener(clickOrTouch, function() {
   localStorage.setItem('vsBot', vsBot)
 })
 
-document.querySelector('.bot-level-btn').addEventListener(clickOrTouch, () => {
+document.querySelector('.bot-level-btn').addEventListener("click", () => {
   botLevel++
   if(botLevel > 4) botLevel = 1
   document.querySelector('.bot-level').innerText = botLevel
