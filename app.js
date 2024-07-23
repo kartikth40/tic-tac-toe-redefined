@@ -23,7 +23,8 @@ const botExpressions = {
   'WAITINGWORDS':["Your turn! Take your time.","Waiting for your move...","What will you do next?", "Thinking hard, huh? Take your time!","Your move! Let's see what you've got.","Take your time, I'm patiently waiting.","Excited to see your strategy!"]
 }
 const isTouchDevice = 'ontouchstart' in window
-const clickOrTouch = isTouchDevice ? 'touchstart' : 'click'
+const clickOrTouch = isTouchDevice ? 'touchend' : 'click'
+let touchMoved = false
 document.querySelector('.footer-year').innerText = new Date().getFullYear()
 let gameOver = false
 const possibleWinPositions = {
@@ -90,7 +91,14 @@ function handleBoxHovers(boxEle, row, col) {
 
 
 function handleBoxClick(boxEle, row, col) {
+  boxEle.addEventListener('touchstart', () => {
+    touchMoved = false
+  })
+  boxEle.addEventListener('touchmove', () => {
+    touchMoved = true
+  })
   boxEle.addEventListener(clickOrTouch, () => {
+    if(isTouchDevice && touchMoved) return
     document.querySelector('.is-bot').disabled = true
     document.querySelector('.bot-level-btn').disabled = true
     if(gameOver || botThinking) return
