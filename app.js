@@ -22,6 +22,8 @@ const botExpressions = {
   'WAITING': ['😗','🤨','🥱','😴','🧐'],
   'WAITINGWORDS':["Your turn! Take your time.","Waiting for your move...","What will you do next?", "Thinking hard, huh? Take your time!","Your move! Let's see what you've got.","Take your time, I'm patiently waiting.","Excited to see your strategy!"]
 }
+const isTouchDevice = 'ontouchstart' in window
+const clickOrTouch = isTouchDevice ? 'touchstart' : 'click'
 document.querySelector('.footer-year').innerText = new Date().getFullYear()
 let gameOver = false
 const possibleWinPositions = {
@@ -40,11 +42,13 @@ let currentPlayer = 0 // 0: O | 1: X
 
 const botExpressionsEle = document.querySelector('.bot-expressions')
 
-document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener('click', function() {
+// document.addEventListener('DOMContentLoaded', (event) => {})
+
+document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener(clickOrTouch, function() {
   location.reload()
 }))
 
-document.querySelector('.is-bot').addEventListener('click', function() {
+document.querySelector('.is-bot').addEventListener(clickOrTouch, function() {
   if(queueOfCrosses.length > 0 || queueOfZeroes.length > 0) {
     return
   }
@@ -54,7 +58,7 @@ document.querySelector('.is-bot').addEventListener('click', function() {
   localStorage.setItem('vsBot', vsBot)
 })
 
-document.querySelector('.bot-level-btn').addEventListener('click', () => {
+document.querySelector('.bot-level-btn').addEventListener(clickOrTouch, () => {
   botLevel++
   if(botLevel > 4) botLevel = 1
   document.querySelector('.bot-level').innerText = botLevel
@@ -86,7 +90,7 @@ function handleBoxHovers(boxEle, row, col) {
 
 
 function handleBoxClick(boxEle, row, col) {
-  boxEle.addEventListener("click", () => {
+  boxEle.addEventListener(clickOrTouch, () => {
     document.querySelector('.is-bot').disabled = true
     document.querySelector('.bot-level-btn').disabled = true
     if(gameOver || botThinking) return
