@@ -45,6 +45,64 @@ const botExpressionsEle = document.querySelector('.bot-expressions')
 
 // document.addEventListener('DOMContentLoaded', (event) => {})
 
+!isTouchDevice && document.addEventListener('keydown', function(event) {
+  let newRow = 0
+  let newCol = 0
+  if (event.key === 'Enter' || event.key === ' ') {
+    for(let row = 0; row < rows; row++) {
+      for(let col = 0; col < cols; col++) {
+        if(document.activeElement === boxes[row][col].element){
+            event.preventDefault();
+            putCurrentMove(boxes[row][col].element, row, col)
+            return
+          }
+        }
+      }
+  }
+  else {
+    const currentBox = getCurrentFocusedBox()
+    console.log(currentBox)
+    switch (event.key) {
+      case 'w':
+      case 'W':
+      case 'ArrowUp':
+          newCol = currentBox.col
+          newRow = currentBox.row > 0 ? currentBox.row - 1 : 2
+          break;
+
+      case 's':
+      case 'S':
+      case 'ArrowDown':
+          newCol = currentBox.col
+          newRow = currentBox.row < 2 ? currentBox.row + 1 : 0
+          break;
+
+      case 'a':
+      case 'A':
+      case 'ArrowLeft':
+          newRow = currentBox.row
+          newCol = currentBox.col > 0 ? currentBox.col - 1 : 2
+          break;
+
+      case 'd':
+      case 'D':
+      case 'ArrowRight':
+          newRow = currentBox.row
+          newCol = currentBox.col < 2 ? currentBox.col + 1 : 0
+          break;
+
+      default:
+          return
+    }
+    console.log(newRow, newCol)
+    boxes[newRow][newCol].element.focus()
+  }
+})
+
+function getCurrentFocusedBox() {
+  return boxes.flat().find(box => box.element === document.activeElement) ?? boxes[1][1]
+}
+
 document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener('click', function() {
   location.reload()
 }))
@@ -66,12 +124,14 @@ document.querySelector('.bot-level-btn').addEventListener("click", () => {
   document.querySelector('.bot-level-btn').setAttribute('data-tip', botLevel === 1 ? "I'm just a random dude" : botLevel === 2 ? "I'll just try to win" : botLevel === 3 ? "I'll try to block you" : "If I can't win then I'll block you")
   localStorage.setItem('botLevel', botLevel)
 })
-
+let tabindex = 1
 for(let row = 0; row < rows; row++) {
   let currentRow = []
   for(let col = 0; col < cols; col++) {
     const boxEle = document.querySelector(`.box-${row+1}${col+1}`)
-    currentRow.push({element: boxEle, marked: false, value: null})
+    boxEle.setAttribute('tabindex', tabindex);
+    tabindex++
+    currentRow.push({element: boxEle, marked: false, value: null, row, col})
     handleBoxHovers(boxEle, row, col)
     handleBoxClick(boxEle, row, col)
   }
@@ -87,6 +147,17 @@ function handleBoxHovers(boxEle, row, col) {
   boxEle.addEventListener("mouseout", () => {
     boxEle.classList.remove('cross-hover', 'circle-hover')
   })
+
+  if(!isTouchDevice) {
+    boxEle.addEventListener("focus", () => {
+      if(gameOver) return
+      if(boxes[row] && boxes[row][col] && boxes[row][col].marked) return
+      boxEle.classList.add(currentPlayer === 1 ? 'cross-hover' : 'circle-hover')
+    })
+    boxEle.addEventListener("blur", () => {
+      boxEle.classList.remove('cross-hover', 'circle-hover')
+    })
+  }
 }
 
 
@@ -99,46 +170,50 @@ function handleBoxClick(boxEle, row, col) {
   })
   boxEle.addEventListener(clickOrTouch, () => {
     if(isTouchDevice && touchMoved) return
-    document.querySelector('.is-bot').disabled = true
-    document.querySelector('.bot-level-btn').disabled = true
-    if(gameOver || botThinking) return
-    if(boxes[row] && boxes[row][col] && boxes[row][col].marked) return
-    const value = currentPlayer
-    markTheTerritory(boxEle, row, col)
-    if(value === 1) {
-      handleCross(boxEle, row, col)
-    }else {
-      handleZero(boxEle, row, col)
-    }
-    Promise.resolve().then(() => {
-      if(vsBot && value === 0 && !gameOver) {
-        const delay = 2
-        botThinking = true
-        const expression = botExpressions.THINKING[getRandomNumber(botExpressions.THINKING.length)]
-        const words = botExpressions.THINKINGWORDS[getRandomNumber(botExpressions.THINKINGWORDS.length)]
-        botExpressionsEle.innerText = expression + ' ' + words
-        const interval = setInterval(() => {
-          let randomBox = boxes[getRandomNumber(3)][getRandomNumber(3)]
-          while(randomBox.marked) {
-            randomBox = boxes[getRandomNumber(3)][getRandomNumber(3)]
-          }
-          randomBox.element.classList.add('cross-hover')
-          setTimeout(() => {
-            randomBox.element.classList.remove('cross-hover')
-          }, 250);
-        }, 300)
+    putCurrentMove(boxEle, row, col)
+  })
+}
+
+function putCurrentMove(boxEle, row, col) {
+  document.querySelector('.is-bot').disabled = true
+  document.querySelector('.bot-level-btn').disabled = true
+  if(gameOver || botThinking) return
+  if(boxes[row] && boxes[row][col] && boxes[row][col].marked) return
+  const value = currentPlayer
+  markTheTerritory(boxEle, row, col)
+  if(value === 1) {
+    handleCross(boxEle, row, col)
+  }else {
+    handleZero(boxEle, row, col)
+  }
+  Promise.resolve().then(() => {
+    if(vsBot && value === 0 && !gameOver) {
+      const delay = 2
+      botThinking = true
+      const expression = botExpressions.THINKING[getRandomNumber(botExpressions.THINKING.length)]
+      const words = botExpressions.THINKINGWORDS[getRandomNumber(botExpressions.THINKINGWORDS.length)]
+      botExpressionsEle.innerText = expression + ' ' + words
+      const interval = setInterval(() => {
+        let randomBox = boxes[getRandomNumber(3)][getRandomNumber(3)]
+        while(randomBox.marked) {
+          randomBox = boxes[getRandomNumber(3)][getRandomNumber(3)]
+        }
+        randomBox.element.classList.add('cross-hover')
         setTimeout(() => {
-          Promise.resolve().then(() => {
-            clearInterval(interval)
-            runBot()
-            botThinking = false
-            const expression = botExpressions.WAITING[getRandomNumber(botExpressions.WAITING.length)]
-            const words = botExpressions.WAITINGWORDS[getRandomNumber(botExpressions.WAITINGWORDS.length)]
-            botExpressionsEle.innerText = expression + ' ' + words
-          })
-        }, delay * 1000);
-      } 
-    })
+          randomBox.element.classList.remove('cross-hover')
+        }, 250);
+      }, 300)
+      setTimeout(() => {
+        Promise.resolve().then(() => {
+          clearInterval(interval)
+          runBot()
+          botThinking = false
+          const expression = botExpressions.WAITING[getRandomNumber(botExpressions.WAITING.length)]
+          const words = botExpressions.WAITINGWORDS[getRandomNumber(botExpressions.WAITINGWORDS.length)]
+          botExpressionsEle.innerText = expression + ' ' + words
+        })
+      }, delay * 1000);
+    } 
   })
 }
 
@@ -150,7 +225,7 @@ function markTheTerritory(boxEle, row, col, botTurn=false) {
     boxEle.setAttribute('data-value', '2️⃣')
     let marked = true
     currentPlayer = currentPlayer === 1 ? 0 : 1
-    boxes[row][col] = {element: boxEle, marked, value}
+    boxes[row][col] = {element: boxEle, marked, value, row, col}
   }
 }
 
@@ -208,7 +283,7 @@ function handleCross(boxEle, row, col) {
     const elementToRemove = queueOfCrosses.shift()
     elementToRemove.element.classList.remove('cross', 'circle', 'vanishing')
     elementToRemove.element.setAttribute('data-value', '')
-    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove.element, marked: false, value: null}
+    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove.element, marked: false, value: null, row: elementToRemove.row, col: elementToRemove.col}
   }
 
   Promise.resolve().then(() => {
@@ -230,7 +305,7 @@ function handleZero(boxEle, row, col) {
     const elementToRemove = queueOfZeroes.shift()
     elementToRemove.element.classList.remove('cross', 'circle', 'vanishing')
     elementToRemove.element.setAttribute('data-value', '')
-    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove.element, marked: false, value: null}
+    boxes[elementToRemove.row][elementToRemove.col] = {element: elementToRemove.element, marked: false, value: null, row: elementToRemove.row, col: elementToRemove.col}
   }
 
   Promise.resolve().then(() => {
