@@ -61,7 +61,6 @@ const botExpressionsEle = document.querySelector('.bot-expressions')
   }
   else {
     const currentBox = getCurrentFocusedBox()
-    console.log(currentBox)
     switch (event.key) {
       case 'w':
       case 'W':
@@ -94,7 +93,6 @@ const botExpressionsEle = document.querySelector('.bot-expressions')
       default:
           return
     }
-    console.log(newRow, newCol)
     boxes[newRow][newCol].element.focus()
   }
 })
@@ -219,6 +217,14 @@ function putCurrentMove(boxEle, row, col) {
 
 function markTheTerritory(boxEle, row, col, botTurn=false) {
   let value = currentPlayer
+
+  if(value === 0) {
+    const audio = new Audio('./assets/sounds/circle.wav');
+    audio.play()
+  }else {
+    const audio = new Audio('./assets/sounds/cross.wav')
+    audio.play()
+  }
   if(!vsBot || value === 0 || botTurn) {
     boxEle.classList.remove('cross-hover', 'circle-hover')
     boxEle.classList.add(currentPlayer === 1 ? 'cross' : 'circle')
@@ -325,16 +331,22 @@ function checkIfWon() {
   gameOver = true
   document.querySelector('.game-over-overlay').classList.add('show')
   if(currentPlayer === 1 && vsBot) {
+    const audio = new Audio('./assets/sounds/won.wav');
+    audio.play()
     document.querySelector('.who-won').innerText = 'You Won!'
     const expression = botExpressions.SAD[getRandomNumber(botExpressions.SAD.length)]
     const words = botExpressions.SADWORDS[getRandomNumber(botExpressions.SADWORDS.length)]
     botExpressionsEle.innerText = expression + ' ' + words
   }else if(vsBot){
+    const audio = new Audio('./assets/sounds/lost.wav');
+    audio.play()
     document.querySelector('.who-won').innerText = 'Bot Won!'
     const expression = botExpressions.HAPPY[getRandomNumber(botExpressions.HAPPY.length)]
     const words = botExpressions.HAPPYWORDS[getRandomNumber(botExpressions.HAPPYWORDS.length)]
     botExpressionsEle.innerText = expression + ' ' + words
   }else {
+    const audio = new Audio('./assets/sounds/won.wav');
+    audio.play()
     document.querySelector('.who-won').innerText = currentPlayer === 1 ? 'Player 1 Won!': 'Player 2 Won!'
   }
   const grid = document.querySelector('.grid-container')

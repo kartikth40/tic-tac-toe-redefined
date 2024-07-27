@@ -284,14 +284,14 @@ body {
   /* font-weight: bolder; */
 }
 .box::before {
-  background-image: url("./imgs/circle.png");
+  background-image: url("./assets/images/circle.png");
   background-size: 50%;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
 }
 .box::after {
-  background-image: url("./imgs/cross.png");
+  background-image: url("./assets/images/cross.png");
   background-size: 70%;
   background-position: center;
   background-repeat: no-repeat;
